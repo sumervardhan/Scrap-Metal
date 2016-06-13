@@ -1,0 +1,794 @@
+#include <iostream>
+#include <string>
+#include <cstdlib>
+#include <ctime>
+#include <windows.h> //For audible sound.
+
+using namespace std;
+
+class Weapon {
+
+    public :
+
+    int damage;
+
+    int splash_damage;
+
+    string name;
+
+    string design;
+
+};
+class Tank {
+
+    public :
+
+    int position;
+
+    bool has_weapon[10];
+
+    char number;
+
+    int score=0;
+
+ };
+class Object {
+
+    public :
+
+    char visible_string;
+
+};
+
+int max_width = 70;
+int max_height = 10;
+
+void introScreen(){
+
+    char junk;
+    char select;
+     string select2;
+
+     cout<< " ______________________________________________________________________________ "<<endl;
+     cout<< "|                                                                              |"<<endl;
+      cout<< "|                                                                              |"<<endl;
+     cout<< "|                                  SCRAP METAL                                 |"<<endl;
+      cout<< "|                                                                              |"<<endl;
+     cout<< "|                                    Made By:                                  |"<<endl;
+      cout<< "|                                Sumer Vardhan                                 |"<<endl;
+     cout<< "|                                                                              |"<<endl;
+      cout<< "|                  /                                                           |"<<endl;
+     cout<< "|                 [+]                                                          |"<<endl;
+      cout<< "|               __---__                                  ___      __---__      |"<<endl;
+     cout<< "|   _         _-       --__----__              /     _---   --__--       --___ |"<<endl;
+      cout<< "| _- -__    _-                    --____      [+]___-                         -|"<<endl;
+     cout<< "|-      -__-                            ---___---                              |"<<endl;
+      cout<< "|______________________________________________________________________________|"<<"\n\n\n\n\n\n\n";
+     cout<< "                         Enter any character to continue: ";
+
+
+
+
+
+    cin>>junk;
+    system("cls");
+
+    start:
+
+    cout<<"   --------------------------------------"<<endl;
+    cout<<"   |              MAIN MENU             |"<<endl;
+     cout<<"   |------------------------------------|"<<endl;
+    cout<<"   |          Enter P for Play          |"<<endl;
+    cout<<"   |------------------------------------|"<<endl;
+     cout<<"   |      Enter I for Instructions      |"<<endl;
+    cout<<"   |------------------------------------|"<<endl;
+    cout<<"   |        Enter C for Credits         |"<<endl;
+     cout<<"   --------------------------------------"<<endl;
+
+    cin >> select;
+
+    if(select=='p' || select=='P')
+     {
+        system("cls");
+     }
+
+    else if(select=='i'|| select=='I')
+    {
+        system("cls");
+        cout<<"Instructions: "<<endl<<endl;
+         cout<<"1. To begin, choose play and select the number of tanks you want."<<endl<<endl;
+         cout<<"2. Enter an identifying character for each tank."<<endl<<endl;
+         cout<<"3. Move left or right using A or D."<<endl<<endl;
+        cout<<"4. Then, choose the serial number of the weapon you would like to fire."<<endl<<endl;
+          cout<<"5. Enter the power: negative numbers shoot left, positive numbers shoot right."<<endl<<endl;
+        cout<<"6. Alternate turns until game is complete, whoever has more points wins!"<<endl<<endl;
+          cout<<"Enter 'exit' to leave the instructions." << endl;
+        cin>>select2;
+
+        if (select2 == "exit" || select2 == "Exit")
+        {
+               system("cls");
+             goto start;
+        }
+
+    }
+
+    else if(select=='c'|| select=='C')
+    {
+        system("cls");
+        cout<<endl<<" Chief programmer: Sumer Vardhan"<<endl<<endl;
+           cout<<" Chief designer: Zach Lunger"<<endl<<endl;
+        cout<<" Idea generator: Jake Barden"<<endl<<endl;
+        cout<<" Idea generator and Project Report Creator: Andy Tang"<<endl<<endl<<endl<<endl;
+           cout<<" Enter 'exit' to leave the credits."<<endl;
+        cin>>select2;
+
+        if(select2 == "exit" || select2 == "Exit")
+        {
+            system("cls");
+               goto start;
+        }
+
+    }
+}
+void loadingScreen(){
+}
+void visualOutput(Tank tank_array[], int num_tanks, int tank_to_move){
+
+    Object world[max_width][max_height];
+
+    int ground_level = 10;
+     int i=1;
+
+    Object empty_object;
+
+    empty_object.visible_string = ' ';
+
+
+    Object tank_left;
+
+    tank_left.visible_string = '[';
+
+
+    Object tank_right;
+
+    tank_right.visible_string = ']';
+
+
+    Object tank_center;
+
+    if(i==1)
+
+    tank_center.visible_string ='1';
+
+
+
+
+
+    else if(i==2)
+
+    tank_center.visible_string ='2';
+
+
+
+
+
+    else if(i==3)
+
+    tank_center.visible_string ='3';
+
+
+
+
+
+    Object tank_top;
+
+    tank_top.visible_string = '/';
+
+
+
+
+
+    Object ground;
+
+    ground.visible_string = '=';
+
+
+
+
+
+
+
+
+
+
+    for(int i=0; i < max_width; i++)
+
+    {
+
+       for(int j=0; j < max_height;j++)
+
+        {
+
+           world[i][j] = empty_object;
+
+       }
+
+    }
+
+
+
+
+
+    // Put in the ground
+
+    for(int i=0; i<max_width; i++)
+
+         {
+
+            world[i][ground_level] = ground;
+
+        }
+
+
+
+
+
+    //Put in the tanks
+
+    for(int i=0;i<num_tanks;i++)
+
+    {
+
+        while(1)
+
+        {
+
+            int tank_position = tank_array[i].position;
+
+            if(tank_position>4&&tank_position<56)
+
+            {
+
+
+
+
+
+                world[tank_position][ground_level + 1].visible_string = tank_array[i].number;
+
+                world[tank_position][ground_level + 2] = tank_top;
+
+                world[tank_position - 1][ground_level + 1] = tank_left;
+
+                world[tank_position + 1][ground_level + 1] = tank_right;
+
+                break;
+
+            }
+
+        }
+
+    }
+
+
+    // Print out the world:
+    for(int j = max_height - 1; j >= 0; j--)
+     {
+
+        for (int i = 0; i < max_width; i++)
+        {
+
+            cout << world[i][j].visible_string;
+
+         }
+
+        cout << endl;
+
+     }
+
+      cout<<"Current Scores:\n\n";
+
+      for(int i=0;i<num_tanks;i++)
+      {
+
+          cout<<"Tank "<<tank_array[i].number<<": "<<tank_array[i].score<<"\n\n";
+
+      }
+
+      cout << "It is currently tank " << tank_array[tank_to_move].number << "'s turn to play.\n\n";
+
+}
+int moveTank(Tank tank_array[], int num_tanks, int tank_to_move){
+
+
+
+
+
+    string move;
+
+
+
+
+
+    int position = tank_array[tank_to_move].position;
+
+
+
+
+    cout << "You may control your tank with A and D. You may choose to stay at your current\nposition by entering 0: ";
+
+    while(1)
+
+    {
+        cin >> move;
+
+        if ((move == "a"||move == "A")&&position>9)
+        {
+                position -= rand()%5+1;
+                break;
+         }
+
+        if ((move == "d"||move == "D")&&position<max_width-9)
+        {
+                position += rand()%5+1;
+                break;
+        }
+
+        if(move=="0"||move=="O"||move == "o")
+         {
+            break;
+        }
+
+        else
+
+        {
+
+            cout << "That is not a valid command. Please try again.";
+
+        }
+
+
+
+
+
+    }
+
+
+
+
+
+     return position;
+
+ }
+Tank make_attack(Tank att_tank, Tank target_tank, Weapon weapon, int landing_position){
+
+    if(abs(landing_position-target_tank.position) < 5)
+
+    {
+
+        att_tank.score += weapon.damage;
+         Beep(530,500);
+
+    }
+
+    return att_tank;
+
+}
+int chooseWeapon(Tank tank_array[], int tank_to_move, int num_tank){
+
+    int select;
+    Tank tank=tank_array[tank_to_move];
+
+     cout<<"Please choose a weapon by entering its serial number. The table below displays weapons that are available for you to use:"<<"\n\n";
+
+
+     cout << endl << "                              WEAPON SELECTION                               " << endl;
+     cout << endl << "  ___________________________________________________________________________" << endl;
+      cout << "  |         Weapons           | Direct hit dmg.|  Splash   |    Special     |" << endl;
+     cout << "  |                           |                |   dmg.    |     Power      |" << endl;
+      cout << "  |___________________________|________________|___________|________________|" << endl;
+
+     if(tank.has_weapon[0])
+     {
+         cout << "  | 1      Small_Missile      |      (20)      |    (5)    |     None       |" << endl;
+          cout << "  |___________________________|________________|___________|________________|" << endl;
+     }
+
+
+
+
+
+     if(tank.has_weapon[1])
+     {
+         cout << "  | 2          Nuke           |      (35)      |   (20)    | Big Splash Dmg.|" << endl;
+          cout << "  |___________________________|________________|___________|________________|" << endl;
+     }
+
+
+     if(tank.has_weapon[2])
+     {
+         cout << "  | 3        .50_Cal          |      (50)      |    (0)    |    Big Dmg.    |" << endl;
+          cout << "  |___________________________|________________|___________|________________|" << endl;
+     }
+
+
+     if(tank.has_weapon[3])
+     {
+          cout << "  | 4          Mines          |      (30)      |    (0)    |  Stays There   |" << endl;
+           cout << "  |___________________________|________________|___________|________________|" << endl;
+     }
+
+
+     if(tank.has_weapon[4])
+     {
+         cout << "  | 5         Volcano         |      (30)      |   (10)    |      None      |" << endl;
+          cout << "  |___________________________|________________|___________|________________|" << endl;
+     }
+
+
+    if(tank.has_weapon[5])
+    {
+        cout << "  | 6       Shock_Wave        |      (40)      |    (5)    |   Big Splash   |" << endl;
+         cout << "  |___________________________|________________|___________|________________|" << endl;
+    }
+
+
+    if(tank.has_weapon[6])
+    {
+        cout << "  | 7       Firestorm         |      (50)      |    (5)    |      None      |" << endl;
+         cout << "  |___________________________|________________|___________|________________|" << endl;
+    }
+
+
+     if(tank.has_weapon[7])
+     {
+          cout << "  | 8       Gamma_Ray         |      (45)      |    (0)    |      None      |" << endl;
+           cout << "  |___________________________|________________|___________|________________|" << endl;
+     }
+
+
+     if(tank.has_weapon[8])
+     {
+         cout << "  | 9         SMG             |      (35)      |    (4)    |      None      |" << endl;
+          cout << "  |___________________________|________________|___________|________________|" << endl;
+     }
+
+
+     if(tank.has_weapon[9])
+     {
+          cout << "  |10         Smash           |      (40)      |   (20)    |    Big Dmg.    |" << endl;
+           cout << "  |___________________________|________________|___________|________________|" << endl;
+     }
+
+
+    while(1)
+    {
+
+        cin>>select;
+
+        if((select)<11 && (select)>0)
+         {
+            if(tank_array[tank_to_move].has_weapon[select-1])
+            {
+                return select-1;
+            }
+
+            else
+            {
+                cout<<"You have already used this weapon before. Please select a new weapon.\n";
+             }
+
+        }
+
+        else
+        {
+            cout<<"That is not a valid command. You did not enter a number between 1-10.\n\nPlease try again:\n";
+        }
+
+   }
+    visualOutput(tank_array, num_tank, tank_to_move);
+}
+int calcLanding(Tank tank){
+
+    int power;
+
+    int current;
+
+    int land;
+
+    while(1)
+
+    {
+
+        cout << "Please enter the power with which you would like to fire the weapon.\n\nHint: The power should be between an integer between 1-59. To shoot backwards,\nenter a negative power." << endl;
+
+        cin >> power;
+
+
+        current = tank.position;
+
+        land = current + power;
+
+
+        if(land<=60)
+
+        {
+
+            return land;
+
+        }
+
+        else
+
+        {
+
+            cout<<"The power entered by you is to high. Please try again.";
+
+        }
+
+    }
+
+    return land;
+
+}
+Tank gen_tank(){
+
+    Tank tank;
+
+    char id;
+
+    tank.position = rand()%(max_width - 10) + 5;
+
+    cout << "Enter identifying character for each tank one at a time:"<<endl;
+
+    cin >> id;
+
+    tank.number = id;
+
+    return tank;
+
+}
+void endingScreen(int winner){
+    int junk;
+    system("cls");
+    cout<<"GAME OVER\n\n\n\nTHE WINNER IS TANK "<<winner<<"\n\n\n\nTHANK YOU FOR PLAYING SCRAP METAL\n\nEnter any key to continue.";
+    cin>>junk;
+}
+ int main(){
+
+    srand(time(0));
+
+    introScreen();
+
+    Weapon weapons[10];
+
+
+
+
+     weapons[0].name="Small Missile";
+
+     weapons[0].design="->";
+
+     weapons[0].damage=20;
+
+     weapons[0].splash_damage=5;
+
+
+
+
+     weapons[1].name="Nuke";
+
+     weapons[1].design="O";
+
+     weapons[1].damage=35;
+
+     weapons[1].splash_damage=20;
+
+
+
+
+     weapons[2].name=".50 Cal";
+
+     weapons[2].design="=>";
+
+     weapons[2].damage=50;
+
+     weapons[2].splash_damage=0;
+
+
+     weapons[3].name="Mines";
+
+     weapons[3].design="o o";
+
+
+     weapons[3].damage=25;
+
+     weapons[3].splash_damage=0;
+
+
+     weapons[4].name="Laser";
+
+     weapons[4].design="---";
+
+     weapons[4].damage=30;
+
+     weapons[4].splash_damage=0;
+
+
+
+
+
+     weapons[5].damage=40;
+
+     weapons[5].splash_damage=20;
+
+
+
+
+
+     weapons[6].damage=50;
+
+     weapons[6].splash_damage=20;
+
+
+
+
+
+     weapons[7].damage=45;
+
+     weapons[7].splash_damage=20;
+
+
+
+
+
+     weapons[8].damage=35;
+
+     weapons[8].splash_damage=20;
+
+
+
+
+
+     weapons[9].damage=40;
+
+     weapons[9].splash_damage=20;
+
+
+
+
+
+
+
+
+
+
+    int num_tanks;
+
+    int tank_to_move;
+
+    int counter = 0;
+
+    int weapon_selection;
+
+    int landing_position;
+
+
+
+
+
+    cout << "Enter the number of tanks you want:" << endl;
+
+    cin >> num_tanks;
+
+
+
+
+
+    Tank tank_array[num_tanks];
+
+
+
+
+
+    // Initialize the tank array:
+
+    for(int i=0;i<num_tanks;i++)
+
+    {
+
+        tank_array[i] = gen_tank();
+
+        for(int j=0;j<10;j++)
+
+        {
+
+            tank_array[i].has_weapon[j]=true;
+
+        }
+
+    }
+
+     // Game loop:
+     while(1)
+
+    {
+
+
+        // Move tank.
+         for(int tank_to_move = 0; tank_to_move < num_tanks; tank_to_move ++)
+
+        {
+            system("cls");
+
+            visualOutput(tank_array, num_tanks, tank_to_move);
+
+            tank_array[tank_to_move].position = moveTank(tank_array, num_tanks, tank_to_move);
+
+            system("cls");
+            visualOutput(tank_array, num_tanks, tank_to_move);
+
+            weapon_selection = chooseWeapon(tank_array, tank_to_move, num_tanks);
+
+
+            system("cls");
+             visualOutput(tank_array, num_tanks, tank_to_move);
+
+            tank_array[tank_to_move].has_weapon[weapon_selection] = false;
+
+
+            landing_position = calcLanding(tank_array[tank_to_move]);
+
+            //makeExplosionAnimation(world,tank_array, num_tanks, landing_position, tank_to_move);
+
+
+            for(int tank_being_attacked = 0; tank_being_attacked < num_tanks; tank_being_attacked ++)
+
+            {
+
+                if(tank_being_attacked!=tank_to_move)
+
+                {
+
+                    tank_array[tank_to_move] = make_attack(tank_array[tank_to_move], tank_array[tank_being_attacked], weapons[weapon_selection], landing_position);
+
+                }
+
+            }
+
+        }
+        int ender;
+        ender=0;
+        for(int i=0;i<num_tanks;i++)
+        {
+            for(int j=0;j<10;j++)
+            {
+                if(tank_array[i].has_weapon[j])
+                 {
+                    ender++;
+                }
+            }
+        }
+        int winner;
+        int maxscore;
+        maxscore=-1;
+
+        if(ender==0)
+        {
+            for(int i=0;i<num_tanks;i++)
+             {
+                    if(tank_array[i].score > maxscore)
+                    {
+                        winner = i;
+                        maxscore = tank_array[i].score;
+                    }
+             }
+
+            endingScreen(winner);
+            break;
+        }
+
+    }
+
+    return 0;
+}
